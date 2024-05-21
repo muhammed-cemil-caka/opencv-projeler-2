@@ -9,16 +9,12 @@ kamera = cv2.VideoCapture(0)
 toplam_parmak_sayisi_tum_eller = 0
 numara = 0
 
-with mp_eller.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5, max_num_hands=2) as eller: 
+with mp_eller.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5, max_num_hands=2) as eller:
     while kamera.isOpened():
         ret, cerceve = kamera.read()
-
         cerceve = cv2.flip(cerceve, 1)
-        
         resim = cv2.cvtColor(cerceve, cv2.COLOR_BGR2RGB)
-        
         sonuclar = eller.process(resim)
-        
         resim = cv2.cvtColor(resim, cv2.COLOR_RGB2BGR)
         
         if sonuclar.multi_hand_landmarks:
@@ -26,11 +22,9 @@ with mp_eller.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5, m
             for numara, el in enumerate(sonuclar.multi_hand_landmarks):
                 mp_cizim.draw_landmarks(resim, el, mp_eller.HAND_CONNECTIONS, 
                                         mp_cizim.DrawingSpec(color=(121, 22, 76), thickness=2, circle_radius=4),
-                                        mp_cizim.DrawingSpec(color=(250, 44, 250), thickness=2, circle_radius=2),
-                                         )
+                                        mp_cizim.DrawingSpec(color=(250, 44, 250), thickness=2, circle_radius=2))
                 
                 basparmak = el.landmark[mp_eller.HandLandmark.THUMB_TIP]
-                
                 isaret = el.landmark[mp_eller.HandLandmark.INDEX_FINGER_TIP]
                 orta = el.landmark[mp_eller.HandLandmark.MIDDLE_FINGER_TIP]
                 yuzuk = el.landmark[mp_eller.HandLandmark.RING_FINGER_TIP]
@@ -42,8 +36,8 @@ with mp_eller.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5, m
                 if basparmak.x < isaret.x:
                     toplam_parmaklar += 1
                 
-                for i in range(0, len(parmaklar) - 1):
-                    if parmaklar[i].y < parmaklar[i - 1].y:
+                for i in range(0, len(parmaklar)):
+                    if parmaklar[i].y < basparmak.y:
                         toplam_parmaklar += 1
                 
                 toplam_parmak_sayisi_tum_eller += toplam_parmaklar
